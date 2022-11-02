@@ -2,10 +2,13 @@ package com.example.myapp;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class ImageResponse {
-    @SerializedName("photos")
+    @SerializedName("JSON")
+
     private List<Image> images;
 
     public ImageResponse(List<Image> images) {

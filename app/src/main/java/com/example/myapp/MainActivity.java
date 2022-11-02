@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +18,9 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-
-    private MainViewModel viewModel;
-    private RecyclerView recyclerView;
-    private ImageAdapter imageAdapter;
+     private MainViewModel viewModel;
+     private RecyclerView recyclerView;
+     private ImageAdapter imageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +29,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewImage);
         imageAdapter = new ImageAdapter();
         recyclerView.setAdapter(imageAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this,1));
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        viewModel.getImages().observe(this, new Observer<List<Image>>() {
+        viewModel.getImagesFromLiveData().observe(this, new Observer<List<Image>>() {
             @Override
             public void onChanged(List<Image> images) {
-
                 imageAdapter.setImages(images);
-                Log.d("MainActivity", images.toString());
             }
         });
-        viewModel.loadImages();
+              viewModel.loadImage();
+        imageAdapter.setOnReachEndListener(new ImageAdapter.OnReachEndListener() {
+            @Override
+            public void onReachEnd() {
+                viewModel.loadImage();
+            }
+        });
     }
 }

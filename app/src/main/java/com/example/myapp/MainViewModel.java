@@ -16,38 +16,38 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-
 public class MainViewModel extends AndroidViewModel {
-
-    private final MutableLiveData<List<Image>> images = new MutableLiveData<>();
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private static final String TAG = "MainViewModel";
+private static final String TAG = "MainViewModel";
+private final MutableLiveData<List<Image>> imagesFromLiveData = new MutableLiveData<>();
+private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+private int page = 1;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public LiveData<List<Image>> getImages() {
-        return images;
+    public MutableLiveData<List<Image>> getImagesFromLiveData() {
+        return imagesFromLiveData;
     }
 
-    public void loadImages() {
-        Disposable disposable = ApiFactory.apiService.loadImage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ImageResponse>() {
-                    @Override
-                    public void accept(ImageResponse imageResponse) throws Throwable {
-                        images.setValue(imageResponse.getImages());
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Throwable {
-                        Log.d(TAG, throwable.toString());
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
+    public void loadImage(){
+       Disposable disposable = ApiFactory.apiService.loadImage(page)
+               .subscribeOn(Schedulers.io())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(new Consumer<List<Image>>() {
+                   @Override
+                   public void accept(List<Image> images) throws Throwable {
+                       // page++;
+                       imagesFromLiveData.setValue(images);
+                   }
+               }, new Consumer<Throwable>() {
+                   @Override
+                   public void accept(Throwable throwable) throws Throwable {
+                       Log.d(TAG, throwable.toString());
+                   }
+               });
+       compositeDisposable.add(disposable);
+   }
 
     @Override
     protected void onCleared() {

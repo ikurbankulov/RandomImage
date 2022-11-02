@@ -16,15 +16,18 @@ import java.util.List;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
 
     private List<Image> images = new ArrayList<>();
+    private OnReachEndListener onReachEndListener;
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
+    }
 
     public void setImages(List<Image> images) {
         this.images = images;
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
-
     public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.item_view, parent,
@@ -32,19 +35,25 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         );
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ImageAdapter.ViewHolder holder, int position) {
         Image image = images.get(position);
         Glide.with(holder.itemView)
-                .load(image.getUrl())
+                .load(image.getDownload_url())
+                .override(800,600)
                 .into(holder.imageView);
-    }
 
+        if(position == images.size() -1 && onReachEndListener != null){
+            onReachEndListener.onReachEnd();
+        }
+    }
     @Override
     public int getItemCount() {
-
         return images.size();
+    }
+
+    interface OnReachEndListener {
+        void onReachEnd();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -54,5 +63,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             super(itemView);
             imageView = itemView.findViewById(R.id.image_view);
         }
+
     }
 }

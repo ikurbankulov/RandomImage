@@ -3,32 +3,30 @@ package com.example.myapp;
 import com.google.gson.annotations.SerializedName;
 
 public class Image {
-
     @SerializedName("id")
-    private int id;
+    private String id;
 
-    @SerializedName("url")
-    private String url;
+    @SerializedName("download_url")
+    private String download_url;
 
-    public int getId() {
+    public Image(String id, String download_url) {
+        this.id = id;
+        this.download_url = download_url;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public String getUrl() {
-
-        return url;
-    }
-
-    public Image(int id, String url) {
-        this.id = id;
-        this.url = url;
+    public String getDownload_url() {
+        return download_url;
     }
 
     @Override
     public String toString() {
         return "Image{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
+                "id='" + id + '\'' +
+                ", download_url='" + download_url + '\'' +
                 '}';
     }
 }
